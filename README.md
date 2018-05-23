@@ -11,7 +11,7 @@ Installation
 ------------
 
 ```
-go get github.com/sony/gobreaker
+go get github.com/influxdata/gobreaker
 ```
 
 Usage
@@ -92,30 +92,22 @@ Example
 ```go
 var cb *breaker.CircuitBreaker
 
-func Get(url string) ([]byte, error) {
-	body, err := cb.Execute(func() (interface{}, error) {
+func Get(url string) (b []byte, err error) {
+	err = cb.Execute(func() error {
 		resp, err := http.Get(url)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		return body, nil
+		return err
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return body.([]byte), nil
+	return b, err
 }
 ```
 
-See [example](https://github.com/sony/gobreaker/blob/master/example) for details.
+See [example](https://github.com/influxdata/gobreaker/blob/master/example) for details.
 
 License
 -------
